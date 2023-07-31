@@ -1,0 +1,41 @@
+Interface + DHCP
+----
+#Skriptas turi paimti laisvą IP ir subnetą
+
+uci set network.test50=interface
+uci set network.test50.metric='7' #dinamiškai pajemam
+uci set network.test50.ipaddr='192.168.30.1' #nurodomas appse
+uci set network.test50.netmask='255.255.255.0'
+uci set network.test50.delegate='1'
+uci set network.test50.force_link='0'
+uci set network.test50.proto='static'
+uci set dhcp.test50=dhcp
+uci set dhcp.test50.start='100'
+uci set dhcp.test50.leasetime='12h'
+uci set dhcp.test50.limit='51'
+uci set dhcp.test50.interface='test50' #random dedam?
+uci commit
+
+VLAN
+----
+#Skriptas turi paimti laisva port ir vlan ID
+
+uci add network switch_vlan
+uci set network.@switch_vlan[{highest_metric_str}].device='switch0'
+uci set network.@switch_vlan[{highest_metric_str}].vlan='{highest_vlan_plus_str}' #dinamiškai
+uci set network.@switch_vlan[{highest_metric_str}].vid='{highest_vlan_plus_str}' #dinamiškai
+uci set network.@switch_vlan[{highest_metric_str}].ports='0t {port_number_str}' #dinamiškai
+uci commit
+
+#VLAN priskyrimas
+uci set network.test50.device='eth0.4' #dinamiškai gaunamas turi būti
+uci commit
+
+
+Reikia komandų:
+
+1. Metrikos: awk '/metric/ { if ($NF > max) max = $NF } END { print max }' /etc/config/network
+2. Paskutinį VLAN portą naudojama awk '/vid/ { if ($NF > max) max = $NF } END { print max }' /etc/config/network (atspausdina naudojamą ID = port, configinant reikia uci komandoje nurodyti vienu skaičiu mažesnį
+3. VLAN fizinį eth awk '/vid/ { if ($NF > max) max = $NF } END { print max }' pridedam viena
+
+stdin, stdout, stderr = client.exec_command("awk '/metric/ { if ($NF > max) max = $NF } END { gsub(/[^0-9]/, "", max); print max }' /etc/config/network")

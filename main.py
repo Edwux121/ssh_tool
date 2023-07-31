@@ -16,9 +16,8 @@ class Main:
         action_frame.grid(column=1, row=0)
 
         #Calling layout
-        main_layout = Layout(data_frame, action_frame)
+        main_layout = Layout(data_frame, action_frame, self.app)
         main_layout.data_fields()
-        main_layout.action_buttons()
 
         self.close_app()
 
