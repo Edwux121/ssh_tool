@@ -2,6 +2,7 @@ import tkinter as tk
 
 from ssh import SSH_connection
 from vlan import Vlan
+from l2tp_server import L2TP_server
 
 class Layout:
     """Class for the display window layout"""
@@ -13,6 +14,7 @@ class Layout:
 
         self.ssh_connect = SSH_connection()
         self.vlan_window = Vlan(main_app)
+        self.l2tp_server_window = L2TP_server(main_app)
 
 
     def data_fields(self):
@@ -51,8 +53,10 @@ class Layout:
             ip_entry.get(), username_entry.get(), pass_entry.get(), port_entry.get()
         ))
         button2 = tk.Button(self.frame2, text="Button2", font=("Arial 24"), width=15)
-        button3 = tk.Button(self.frame2, text="Button3", font=("Arial 24"), width=15)
-        button4 = tk.Button(self.frame2, text="Button4", font=("Arial 24"), width=15)
+        button3 = tk.Button(self.frame2, text="L2TP Server", font=("Arial 24"), width=15, command=lambda:self.l2tp_server_window.open_l2tp_window(self.main_app,
+            ip_entry.get(), username_entry.get(), pass_entry.get(), port_entry.get()
+        ))
+        button4 = tk.Button(self.frame2, text="L2TP Client", font=("Arial 24"), width=15)
         button5 = tk.Button(self.frame2, text="Button5", font=("Arial 24"), width=15)
         button6 = tk.Button(self.frame2, text="Button6", font=("Arial 24"), width=15)
 

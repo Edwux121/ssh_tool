@@ -4,7 +4,7 @@ class SSH_connection:
     """"Class responsible for SSH commands execution"""
 
     def vlan_config(self, client, ip, port_number):
-        """VLAN configuration"""
+        """VLAN configuration via SSH"""
        
         #Preparing VLAN and Metric 
 
@@ -43,4 +43,17 @@ class SSH_connection:
         
         stdin6, stdout6, stderr6 = client.exec_command("/etc/init.d/network restart")
 
-        #client.close()
+    def l2tp_server_config(self, client, server_ip, client_ip):
+        """Configuration for L2TP server via SSH"""
+
+        #Server and ip clients variables for uci commands
+        server_ip_str = str(server_ip)
+        client_ip_str = str(client_ip)
+        server_ip_limit = server_ip_str + ".30"
+        server_ip_for_uci = server_ip_str + ".1"
+        server_ip_start = server_ip_str + ".20"
+
+        #Creating xl2tp interface
+        xl2tp_server = f"uci add xl2tpd test51 && uci set xl2tpd.test51=service && uci set xl2tpd.test51.type='server' && uci set xl2tpd.test51.limit='{server_ip_limit}' && uci set xl2tpd.test51.localip='{server_ip_for_uci}' && uci set xl2tpd.test51.start='{server_ip_start}' && uci set xl2tpd.test51._name='test51' && uci set xl2tpd.test51.chap='0' && uci set xl2tpd.test51.enabled='1' && uci add xl2tpd login && uci set xl2tpd.@login[0].username='test' && uci set xl2tpd.@login[0].password='test12345' && uci set xl2tpd.@login[0].remoteip='{client_ip_str}' && uci commit"
+
+        
