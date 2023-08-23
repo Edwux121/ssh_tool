@@ -46,31 +46,31 @@ L2TP
 
 -----
 
-Firewall:
+uci set firewall:
 
-1. Sukuriamas nauja Firewall zona
+1. Sukuriamas nauja uci set firewall zona
 2. Allow forward to destination zones: lan ir WAN
 3. Allow forward from source zones: lan
-4. Firewall Traffic rule praleidžianti 1701 port
+4. uci set firewall Traffic rule praleidžianti 1701 port
 
 ----
 
 VPN:
 
-1. Sukuriam serverį
+1. Sukuriam serverį +
 2. Sukuriam client (tik username ir password arba paprašyti įvesti šią info)
 
-Komandos:
+Komandos (l2tp server):
 
-uci add xl2tpd bbbb
-uci set xl2tpd.bbbb=service
-uci set xl2tpd.bbbb.type='server'
-uci set xl2tpd.bbbb.limit='192.168.0.30' # pagal nurodytą IP
-uci set xl2tpd.bbbb.localip='192.168.0.1' # įvedamas
-uci set xl2tpd.bbbb.start='192.168.0.20' # pagal nurodytą IP
-uci set xl2tpd.bbbb._name='bbbb'
-uci set xl2tpd.bbbb.chap='0'
-uci set xl2tpd.bbbb.enabled='1'
+uci add xl2tpd test51
+uci set xl2tpd.test51=service
+uci set xl2tpd.test51.type='server'
+uci set xl2tpd.test51.limit='192.168.0.30' # pagal nurodytą IP
+uci set xl2tpd.test51.localip='192.168.0.1' # įvedamas
+uci set xl2tpd.test51.start='192.168.0.20' # pagal nurodytą IP
+uci set xl2tpd.test51._name='test51'
+uci set xl2tpd.test51.chap='0'
+uci set xl2tpd.test51.enabled='1'
 
 uci add xl2tpd login
 uci set xl2tpd.@login[0].username='test'
@@ -78,3 +78,30 @@ uci set xl2tpd.@login[0].password='test12345'
 uci set xl2tpd.@login[0].remoteip='192.168.1.1'
 
 uci commit
+
+uci set firewall settings:
+
+uci set firewall.23=zone
+uci set firewall.23.name='l2tp'
+uci set firewall.23.device='l2tp+ xl2tp+'
+uci set firewall.23.input='ACCEPT'
+uci set firewall.23.forward='REJECT'
+uci set firewall.23.masq='1'
+uci set firewall.23.output='ACCEPT'
+uci set firewall.24=forwarding
+uci set firewall.24.dest='lan'
+uci set firewall.24.src='l2tp'
+uci set firewall.25=forwarding
+uci set firewall.25.dest='wan'
+uci set firewall.25.src='l2tp'
+uci set firewall.26=forwarding
+uci set firewall.26.dest='l2tp'
+uci set firewall.26.src='lan'
+uci set firewall.27=rule
+uci set firewall.27.dest_port='1701'
+uci set firewall.27.src='wan'
+uci set firewall.27.name='Allow-l2tp-traffic'
+uci set firewall.27.target='ACCEPT'
+uci set firewall.27.vpn_type='l2tp'
+uci set firewall.27.proto='udp'
+uci set firewall.27.family='ipv4'
